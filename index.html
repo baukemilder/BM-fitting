@@ -58,6 +58,8 @@ input,select{font-family:inherit;color-scheme:dark}
 input:focus,select:focus{border-color:#30D158 !important}
 @keyframes sweep{0%{top:0}100%{top:100%}}
   body.light #screen, body.light #tabnav, body.light #sheet { filter: invert(.92) hue-rotate(180deg); }
+  .hs { scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+  .hs::-webkit-scrollbar { display: none; }
   .tabnav .cb { position: absolute; top: 2px; right: calc(50% - 22px); min-width: 17px; height: 17px; padding: 0 4px; box-sizing: border-box; border-radius: 9px; background: #30D158; color: #00210A; font-size: 11px; font-weight: 800; align-items: center; justify-content: center; }
 </style>
 <div class="bar"><b>BM Fitting</b><span>demo</span><button type="button" id="restart">Opnieuw starten</button><button type="button" id="skip">Naar Home</button></div>
@@ -114,6 +116,18 @@ const PRODUCTS = [
 const SHOP_ORDER = { Zara: ['zara-oxford', 'zara-coat', 'zara-straight'], Uniqlo: ['uniqlo-tee', 'uniqlo-merino', 'uniqlo-chino'], 'H&M': ['hm-denim', 'hm-hoodie', 'hm-sneakers'], COS: ['cos-coat', 'cos-wide', 'cos-shirt'], Arket: ['arket-linen', 'arket-pleat', 'arket-jack'], Nike: ['nike-max', 'nike-dri', 'nike-court'] };
 const AD_TEXT = { Zara: 'Nieuw: herfst', Uniqlo: 'Nieuwe kleuren', 'H&M': 'Denim & hoodies', COS: 'Rustig in wol', Arket: 'Tijdloos linnen', Nike: 'Nieuwe sneakers' };
 
+const EXTRA = {
+  Zara: [['Satijnen overhemd', 49.95, 'TOP', ['Wit', 'Beige']], ['Gebreide trui', 39.95, 'TOP', ['Camel', 'Navy']], ['Cargo broek', 49.95, 'PANTS', ['Groen', 'Zwart']], ['Leren jack', 159, 'COAT', ['Zwart']], ['Pufferjas', 89.95, 'COAT', ['Zwart', 'Navy']], ['Retro sneakers', 59.95, 'SHOE', ['Wit', 'Grijs']], ['Linnen broek', 45.95, 'PANTS', ['Beige', 'Wit']], ['Poloshirt', 29.95, 'TOP', ['Navy', 'Wit']]],
+  Uniqlo: [['AIRism T-shirt', 14.9, 'TOP', ['Wit', 'Zwart']], ['Fleece jas', 39.9, 'COAT', ['Navy', 'Zwart']], ['Ultra Light Down', 79.9, 'COAT', ['Zwart', 'Navy']], ['Slim jeans', 49.9, 'PANTS', ['Blauw', 'Zwart']], ['Oxford overhemd', 39.9, 'TOP', ['Lichtblauw', 'Wit']], ['Joggingbroek', 29.9, 'PANTS', ['Grijs', 'Zwart']], ['Kasjmier trui', 99.9, 'TOP', ['Camel', 'Grijs']], ['Canvas sneakers', 34.9, 'SHOE', ['Wit', 'Zwart']]],
+  'H&M': [['Regular jeans', 29.99, 'PANTS', ['Blauw', 'Zwart']], ['Linnen overhemd', 29.99, 'TOP', ['Wit', 'Beige']], ['Teddy jas', 59.99, 'COAT', ['Beige', 'Zwart']], ['Joggingbroek', 24.99, 'PANTS', ['Grijs', 'Zwart']], ['Rib top', 12.99, 'TOP', ['Wit', 'Zwart']], ['Chelsea boots', 59.99, 'SHOE', ['Zwart']], ['Bomberjack', 49.99, 'COAT', ['Groen', 'Zwart']], ['Oversized hoodie', 34.99, 'TOP', ['Grijs', 'Navy']]],
+  COS: [['Gebreid vest', 89, 'TOP', ['Grijs', 'Navy']], ['Poplin overhemd', 79, 'TOP', ['Wit', 'Lichtblauw']], ['Tapered broek', 99, 'PANTS', ['Zwart', 'Beige']], ['Wollen trui', 85, 'TOP', ['Camel', 'Zwart']], ['Trenchcoat', 215, 'COAT', ['Beige']], ['Leren sneakers', 135, 'SHOE', ['Wit']], ['Boxy T-shirt', 45, 'TOP', ['Wit', 'Zwart']], ['Cargo overshirt', 119, 'COAT', ['Groen', 'Zwart']]],
+  Arket: [['Merino trui', 89, 'TOP', ['Navy', 'Grijs']], ['Chino', 79, 'PANTS', ['Beige', 'Navy']], ['Wollen jas', 289, 'COAT', ['Camel', 'Zwart']], ['Flanel overhemd', 69, 'TOP', ['Rood', 'Navy']], ['Denim jack', 129, 'COAT', ['Blauw']], ['Suède sneakers', 149, 'SHOE', ['Beige']], ['Rib shirt', 35, 'TOP', ['Wit', 'Zwart']], ['Corduroy broek', 99, 'PANTS', ['Camel', 'Groen']]],
+  Nike: [['Tech Fleece hoodie', 119.99, 'TOP', ['Grijs', 'Zwart']], ['Joggingbroek', 64.99, 'PANTS', ['Zwart', 'Grijs']], ['Windrunner jack', 99.99, 'COAT', ['Zwart', 'Navy']], ['Pegasus hardloopschoen', 129.99, 'SHOE', ['Wit', 'Zwart']], ['Trainingsshort', 34.99, 'PANTS', ['Zwart', 'Navy']], ['Poloshirt', 44.99, 'TOP', ['Wit', 'Navy']], ['Dunk Low', 119.99, 'SHOE', ['Wit', 'Groen']], ['Parka', 169.99, 'COAT', ['Zwart', 'Groen']]],
+  Mango: [['Linnen overhemd', 39.99, 'TOP', ['Wit', 'Beige']], ['Rechte jeans', 49.99, 'PANTS', ['Blauw', 'Zwart']], ['Trenchcoat', 119.99, 'COAT', ['Beige']], ['Gebreide polo', 35.99, 'TOP', ['Navy', 'Wit']], ['Leren loafers', 79.99, 'SHOE', ['Zwart']], ['Cargo broek', 45.99, 'PANTS', ['Groen', 'Zwart']]]
+};
+Object.keys(EXTRA).forEach((b) => EXTRA[b].forEach((e) => PRODUCTS.push(P((b + '-' + e[0]).toLowerCase().replace(/[^a-z0-9]+/g, '-'), b, e[0], e[1], e[2], e[3]))));
+const brandProducts = (b) => { const first = (SHOP_ORDER[b] || []).map((id) => PRODUCTS.find((p) => p.id === id)); return first.concat(PRODUCTS.filter((p) => p.brand === b && first.indexOf(p) < 0)).filter(Boolean).map((p) => p.id); };
+const tint = (hex, a) => { const n = parseInt(hex.slice(1), 16); return 'rgba(' + (n >> 16) + ',' + ((n >> 8) & 255) + ',' + (n & 255) + ',' + a + ')'; };
 const uid = (p) => (p || 'id') + Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
 const eur = (n) => '€' + Number(n).toFixed(2).replace('.', ',');
 const esc = (s) => String(s == null ? '' : s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -124,7 +138,7 @@ const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); r
 
 const W = (id, name, brand, size, kind, fill, o) => Object.assign({ id, name, brand, size, kind, fill, owned: true, fav: false, worn: false }, o || {});
 const SEED = () => ({
-  v: 2,
+  v: 3,
   user: { voornaam: 'Bauke', achternaam: '', email: 'bauke@email.com', geb: '', pwh: '', lengte: '', gewicht: '', buik: '', borst: '', heup: '', geslacht: 'Man', scan: 70, loggedIn: false,
     straat: '', huisnr: '', postcode: '', plaats: 'Amsterdam' },
   cart: [
@@ -132,13 +146,17 @@ const SEED = () => ({
     { cid: 'c2', pid: 'zara-ribbed', size: 'M', color: 'Saliegroen' },
     { cid: 'c3', pid: 'uniqlo-tee', size: 'M', color: 'Navy' }
   ],
-  recent: ['mango-tailored', 'hm-denim'],
+  recent: ['mango-tailored', 'hm-denim', 'zara-coat', 'cos-shirt', 'nike-max', 'uniqlo-merino', 'arket-pleat', 'mango-blazer'],
   wardrobe: [
     W('w1', 'Zwart shirt', 'Adidas', 'M', 'TOP', '#E5E5EA', { worn: true }),
     W('w2', 'Witte blouse', 'Zara', 'S', 'TOP', '#FFFFFF'),
     W('w3', 'Blauwe jeans', 'H&M', 'L', 'PANTS', '#8EA3D6', { worn: true }),
     W('w4', 'Zwarte jas', 'Pull & Bear', 'M', 'COAT', '#E0C49C', { fav: true }),
-    W('w5', 'Witte sneakers', 'H&M', '42', 'SHOE', '#FFFFFF', { owned: false, pid: 'hm-sneakers' })
+    W('w5', 'Witte sneakers', 'H&M', '42', 'SHOE', '#FFFFFF', { owned: false, pid: 'hm-sneakers' }),
+    W('w6', 'Grijze hoodie', 'Nike', 'M', 'TOP', '#A8A8B0'), W('w7', 'Beige trui', 'Uniqlo', 'M', 'TOP', '#D8C3A5'), W('w8', 'Witte T-shirt', 'Uniqlo', 'M', 'TOP', '#F2F2F2'),
+    W('w9', 'Zwarte broek', 'Zara', 'M', 'PANTS', '#B0B0B8'), W('w10', 'Beige chino', 'H&M', 'L', 'PANTS', '#D8C3A5'), W('w11', 'Grijze joggingbroek', 'Nike', 'M', 'PANTS', '#9A9AA2'),
+    W('w12', 'Groen overshirt', 'COS', 'M', 'COAT', '#8FA98A'), W('w13', 'Denim jack', 'Levi\'s', 'M', 'COAT', '#6F8FC0', { fav: true }),
+    W('w14', 'Zwarte sneakers', 'Nike', '42', 'SHOE', '#B0B0B8'), W('w15', 'Bruine laarzen', 'Dr. Martens', '42', 'SHOE', '#B07A4E')
   ],
   wish: [], orders: [], outfits: [], liked: ['Zara', 'Uniqlo'], custom: {},
   set: { dark: true, notif: true, remind: false },
@@ -149,7 +167,7 @@ const SEED = () => ({
 const APP = SEED();
 const MEM = { reg: {}, login: {}, link: '', own: { name: '', brand: '', size: '', kind: 'TOP' }, q: '', ww: '', ww2: '' };
 function load() {
-  try { const s = localStorage.getItem(LS_KEY); if (s) { const o = JSON.parse(s); if (o && o.v === 2) { const d = SEED(); for (const k of Object.keys(d)) APP[k] = (o[k] !== undefined) ? (typeof d[k] === 'object' && !Array.isArray(d[k]) ? Object.assign({}, d[k], o[k]) : o[k]) : d[k]; } } } catch (e) { }
+  try { const s = localStorage.getItem(LS_KEY); if (s) { const o = JSON.parse(s); if (o && o.v === 3) { const d = SEED(); for (const k of Object.keys(d)) APP[k] = (o[k] !== undefined) ? (typeof d[k] === 'object' && !Array.isArray(d[k]) ? Object.assign({}, d[k], o[k]) : o[k]) : d[k]; } } } catch (e) { }
 }
 function save() { try { localStorage.setItem(LS_KEY, JSON.stringify(APP)); } catch (e) { } }
 function resetAll() {
@@ -496,6 +514,7 @@ ENH['start-8-inloggen'] = (r) => {
 };
 
 function rowsHTML(tplEl) { return tplEl.outerHTML; }
+let rowTplRecent = '', btnTplRecent = '', inTplRecent = '';
 ENH['home-h'] = (r) => {
   const u = APP.user, hi = tx('Hoi Bauke', r); if (hi) hi.textContent = 'Hoi ' + (u.voornaam || 'daar');
   const av = $('button[aria-label="Profiel"]', r); if (av) av.textContent = (u.voornaam || 'B')[0].toUpperCase();
@@ -503,22 +522,23 @@ ENH['home-h'] = (r) => {
   const nameEl = tx('Tailored pantalon', r); let row = nameEl; while (row && !row.querySelector(':scope > div[data-go="scan-3"]')) row = row.parentElement;
   if (row) {
     const list = row.parentElement, btnTpl = row.lastElementChild.outerHTML, inTpl = row.nextElementSibling.lastElementChild.outerHTML, rowTpl = row.outerHTML;
+    rowTplRecent = rowTpl; btnTplRecent = btnTpl; inTplRecent = inTpl;
     const head = list.previousElementSibling, wijzig = head && head.querySelector('button');
     if (wijzig) { wijzig.removeAttribute('data-toast'); wijzig.setAttribute('data-act', 'editRecent'); wijzig.textContent = APP.ui.editRecent ? 'Klaar' : 'Wijzig'; }
     const hl = head && head.querySelector('a'); if (hl) { hl.removeAttribute('data-go'); hl.setAttribute('data-act', 'go:scan-1'); }
-    list.innerHTML = '';
-    const recent = APP.recent.slice(0, 3);
+    list.innerHTML = ''; hscroll(list);
+    const recent = APP.recent.slice(0, 8);
     if (!recent.length) list.innerHTML = '<div style="color:#A1A1A6;font-size:14px;padding:6px 2px">Nog niets gescand. Tik op Scannen of plak een link.</div>';
     recent.forEach((id) => {
       const p = prod(id), inCart = APP.cart.some((c) => c.pid === id);
       const t = document.createElement('div'); t.innerHTML = rowTpl; const el = t.firstChild;
       const tn = tx('Tailored pantalon', el); tn.textContent = p.name; tx('Mango · €72,95', el).textContent = p.brand + ' · ' + eur(p.price);
-      const th = el.querySelector(':scope > div[data-go="scan-3"]'); th.removeAttribute('data-go'); th.setAttribute('data-act', 'openProd:' + id + ':scan'); const pa = th.querySelector('path'); if (pa) pa.setAttribute('d', KIND[p.kind]);
+      const th = el.querySelector(':scope > div[data-go="scan-3"]'); th.removeAttribute('data-go'); th.setAttribute('data-act', 'openProd:' + id + ':scan'); const pa = th.querySelector('path'); if (pa) pa.setAttribute('d', KIND[p.kind]); th.style.background = tint(fillFor(p.colors[0]), .22); th.style.color = fillFor(p.colors[0]);
       let right = el.lastElementChild; const tmp = document.createElement('div');
       if (APP.ui.editRecent) { tmp.innerHTML = '<button data-act="rmRecent:' + id + '" style="height:34px;padding:0 12px;border-radius:17px;border:0;background:rgba(255,69,58,.16);color:#FF453A;font-weight:700;font-size:13px">Verwijder</button>'; }
       else if (inCart) tmp.innerHTML = inTpl; else { tmp.innerHTML = btnTpl; }
       const nr = tmp.firstChild; if (nr.removeAttribute) { nr.removeAttribute('data-toast'); if (!inCart && !APP.ui.editRecent) nr.setAttribute('data-act', 'addCart:' + id); }
-      right.replaceWith(nr); list.appendChild(el);
+      right.replaceWith(nr); el.style.flex = '0 0 172px'; el.style.scrollSnapAlign = 'start'; list.appendChild(el);
     });
   }
   /* mandje */
@@ -535,8 +555,32 @@ ENH['home-h'] = (r) => {
       const k = el.querySelector('a[data-go]'); k.removeAttribute('data-go'); k.removeAttribute('href'); k.setAttribute('data-act', 'buyOne:' + c.cid); list.appendChild(el);
     });
     if (items.length) { const t = document.createElement('div'); t.innerHTML = totTpl; const el = t.firstChild; tx('Totaal', el).textContent = 'Totaal' + (items.length > 2 ? ' (' + items.length + ' items)' : ''); const amt = Array.from(el.querySelectorAll('span')).find((s) => /^€/.test(own(s))); if (amt) amt.textContent = eur(sum(items.map((c) => c.p.price))); list.appendChild(el); }
+    discover(r, list.parentElement, rowTplRecent, btnTplRecent, inTplRecent);
   }
+  const root = r.firstElementChild; if (root) { root.style.height = 'auto'; root.style.minHeight = '1100px'; root.style.paddingBottom = '130px'; }
 };
+function hscroll(el) { el.classList.add('hs'); el.style.cssText += ';display:flex;overflow-x:auto;overflow-y:hidden;gap:12px;margin:0 -16px;padding:0 16px 4px;scroll-snap-type:x proximity;scroll-padding:0 16px'; }
+function homeCard(p, tplHTML, btnHTML, inHTML) {
+  const t = document.createElement('div'); t.innerHTML = tplHTML; const el = t.firstChild, inCart = APP.cart.some((c) => c.pid === p.id);
+  tx('Tailored pantalon', el).textContent = p.name; tx('Mango · €72,95', el).textContent = p.brand + ' · ' + eur(p.price);
+  const th = el.querySelector(':scope > div[data-go="scan-3"]'); th.removeAttribute('data-go'); th.setAttribute('data-act', 'openProd:' + p.id + ':shop'); const pa = th.querySelector('path'); if (pa) pa.setAttribute('d', KIND[p.kind]); th.style.background = tint(fillFor(p.colors[0]), .22); th.style.color = fillFor(p.colors[0]);
+  const tmp = document.createElement('div'); tmp.innerHTML = inCart ? inHTML : btnHTML; const nr = tmp.firstChild; if (nr.removeAttribute) { nr.removeAttribute('data-toast'); if (!inCart) nr.setAttribute('data-act', 'addCart:' + p.id); }
+  el.lastElementChild.replaceWith(nr); el.style.flex = '0 0 172px'; el.style.scrollSnapAlign = 'start'; return el;
+}
+function discover(r, afterEl, rowTpl, btnTpl, inTpl) {
+  if (!rowTpl || r.querySelector('[data-disc]')) return;
+  const headTpl = $$('a', r).find((a) => /^Recent gescand/.test(a.textContent.trim()));
+  const mk = (title, ids) => {
+    const wrap = document.createElement('div'); wrap.setAttribute('data-disc', '1'); wrap.style.cssText = 'display:flex;flex-direction:column;gap:14px;padding:0 16px;margin-top:6px';
+    const h = document.createElement('div'); h.style.cssText = 'font-size:26px;font-weight:800;letter-spacing:-0.02em'; h.textContent = title; wrap.appendChild(h);
+    const row = document.createElement('div'); hscroll(row); ids.forEach((id) => row.appendChild(homeCard(prod(id), rowTpl, btnTpl, inTpl))); wrap.appendChild(row); return wrap;
+  };
+  const liked = APP.liked.flatMap((b) => brandProducts(b)).filter((id) => APP.recent.indexOf(id) < 0 && !APP.cart.some((c) => c.pid === id));
+  const rest = PRODUCTS.map((p) => p.id).filter((id) => liked.indexOf(id) < 0 && APP.recent.indexOf(id) < 0);
+  const holder = afterEl.parentElement; /* kolom met secties */
+  const a = mk('Nieuw voor jou', liked.filter((_, i) => i % 2 === 0).slice(0, 10)), b = mk('Populair deze week', rest.filter((_, i) => i % 3 === 0).slice(0, 10));
+  afterEl.after(a); a.after(b);
+}
 
 function tileHTML(it) {
   const badge = !it.owned ? '<span data-act="plus:' + esc(it.id) + '" aria-label="Nog niet gekocht" style="position:absolute;right:6px;top:6px;width:26px;height:26px;border-radius:13px;background:rgba(255,255,255,.18);color:#fff;display:flex;align-items:center;justify-content:center"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round"><path d="M12 5v14M5 12h14"></path></svg></span>'
@@ -556,7 +600,9 @@ ENH['kast-1'] = (r) => {
   /* categorie chips */
   const a = tx('Alles', r), o = tx('Outfits', r), cats = ['Alles', 'Outfits', 'Shirts', 'Broeken', 'Jassen'];
   const sOn = a.getAttribute('style'), sOff = o.getAttribute('style');
-  cats.forEach((c) => { const b = tx(c, r); b.setAttribute('data-act', 'kastCat:' + c); b.setAttribute('style', c === APP.ui.cat ? sOn : sOff); });
+  cats.forEach((c) => { const b = tx(c, r); b.setAttribute('data-act', 'kastCat:' + c); b.setAttribute('style', (c === APP.ui.cat ? sOn : sOff) + ';flex:none'); });
+  { const row = a.parentElement; row.classList.add('hs'); row.style.overflowX = 'auto'; row.style.flex = 'none'; }
+  kastSheet(r);
   /* grid */
   const grid = $('button[aria-label^="Zwart shirt"]', r).parentElement, cat = APP.ui.cat;
   const kmap = { Shirts: 'TOP', Broeken: 'PANTS', Jassen: 'COAT' };
@@ -611,13 +657,19 @@ ENH['winkel-ab'] = (r) => {
   sections.forEach((s) => {
     const nameSpan = $$('span', s).find((x) => SITE[own(x)]); const b = nameSpan ? own(nameSpan) : null; if (!b) return;
     s.dataset.brand = b;
-    const tiles = $$('a', s).filter((a) => /PRIJS|€/.test(a.textContent)), kinds = [];
-    tiles.forEach((a, i) => {
-      const id = SHOP_ORDER[b][i], p = prod(id);
-      const pr = $$('span', a).find((x) => own(x) === '[PRIJS]' || /^€/.test(own(x))); if (pr) pr.textContent = eur(p.price);
-      a.removeAttribute('href'); a.setAttribute('data-act', 'openProd:' + id + ':shop'); a.setAttribute('aria-label', p.name + ' van ' + b + ', ' + eur(p.price)); a.style.cursor = 'pointer';
-      const nm = document.createElement('span'); nm.textContent = p.name; nm.style.cssText = 'position:absolute;left:8px;right:8px;bottom:30px;font-size:11px;font-weight:600;color:#fff;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap'; if (getComputedStyle(a).position === 'static') a.style.position = 'relative'; a.appendChild(nm);
-    });
+    const tiles = $$('a', s).filter((a) => /PRIJS|€/.test(a.textContent));
+    if (tiles.length) {
+      const tplT = tiles[0].cloneNode(true), box = tiles[0].parentElement; box.innerHTML = '';
+      box.classList.add('hs'); box.style.overflowX = 'auto'; box.style.overflowY = 'hidden'; box.style.scrollSnapType = 'x proximity'; box.style.scrollPaddingLeft = '14px'; box.style.paddingRight = '14px'; box.style.paddingBottom = '6px';
+      brandProducts(b).forEach((id) => {
+        const p = prod(id), a2 = tplT.cloneNode(true);
+        const pr = $$('span', a2).find((x) => own(x) === '[PRIJS]' || /^€/.test(own(x))); if (pr) pr.textContent = eur(p.price);
+        const pa = a2.querySelector('svg path'); if (pa) pa.setAttribute('d', KIND[p.kind]);
+        a2.removeAttribute('href'); a2.setAttribute('data-act', 'openProd:' + id + ':shop'); a2.setAttribute('aria-label', p.name + ' van ' + b + ', ' + eur(p.price)); a2.style.cursor = 'pointer'; a2.style.scrollSnapAlign = 'start';
+        const nm = document.createElement('span'); nm.textContent = p.name; nm.style.cssText = 'position:absolute;left:10px;right:50px;bottom:10px;font-size:11px;font-weight:700;color:#fff;line-height:1.2;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden'; a2.appendChild(nm);
+        box.appendChild(a2);
+      });
+    }
     const all = $$('a', s).find((a) => /Alles shoppen/.test(a.textContent)); if (all) { all.removeAttribute('href'); all.setAttribute('data-act', 'shopAll:' + b); all.style.cursor = 'pointer'; }
     s.style.display = (MEM.q && !b.toLowerCase().includes(MEM.q.toLowerCase())) ? 'none' : '';
   });
@@ -626,16 +678,17 @@ ENH['winkel-ab'] = (r) => {
     const nm = $$('span', art).find((x) => SITE[own(x)]); if (!nm) return; const b = own(nm);
     const t = tx('[ADVERTENTIETEKST]', art); if (t) t.textContent = AD_TEXT[b] || 'Ontdek de nieuwste collectie.';
     const vis = $$('a', art).find((a) => /Bezoek/.test(a.textContent)); if (vis) { vis.setAttribute('href', brandUrl(b)); vis.setAttribute('target', '_blank'); vis.setAttribute('rel', 'noopener'); }
-    const pas = tx('Pas op mij', art); if (pas) pas.setAttribute('data-act', 'openProd:' + SHOP_ORDER[b][0] + ':shop');
+    const pas = tx('Pas op mij', art); if (pas) pas.setAttribute('data-act', 'openProd:' + brandProducts(b)[0] + ':shop');
   });
   /* story bolletjes */
   const story = $$('a[href="#"]', r).filter((a) => SITE[a.textContent.replace(/^\s*\S*?(?=[A-Za-z])/, '').trim()] || Object.keys(SITE).some((k) => a.textContent.endsWith(k)));
   story.forEach((a) => { const b = Object.keys(SITE).find((k) => a.textContent.endsWith(k) && k !== 'Mango'); if (b) { a.removeAttribute('href'); a.setAttribute('data-act', 'shopAll:' + b); } });
-  const add = $('a[href="#ontdek"]', r); if (add) { add.removeAttribute('href'); add.setAttribute('data-act', 'scrollTo:ontdek'); }
+  const add = $('a[href="#ontdek"]', r); if (add && add.parentElement) { const sr = add.parentElement; sr.classList.add('hs'); sr.style.overflowX = 'auto'; }
+  if (add) { add.removeAttribute('href'); add.setAttribute('data-act', 'scrollTo:ontdek'); }
 };
 
 ENH['winkel-detail'] = () => {
-  const b = APP.ui.shop || 'Zara', ids = Object.keys(SHOP_ORDER).includes(b) ? SHOP_ORDER[b].concat(PRODUCTS.filter((p) => p.brand === b && SHOP_ORDER[b].indexOf(p.id) < 0).map((p) => p.id)) : PRODUCTS.filter((p) => p.brand === b).map((p) => p.id);
+  const b = APP.ui.shop || 'Zara', ids = brandProducts(b);
   const liked = APP.liked.indexOf(b) >= 0;
   mountDyn(shell(esc(b), '<div style="display:flex;gap:8px"><button data-act="toggleLike:' + esc(b) + '" style="flex:1;height:44px;border-radius:22px;border:0;font-weight:700;font-size:15px;background:' + (liked ? 'rgba(255,92,138,.18)' : '#2C2C2E') + ';color:' + (liked ? '#FF5C8A' : '#fff') + '">' + (liked ? '♥ Favoriet' : 'Volgen') + '</button><a href="' + brandUrl(b) + '" target="_blank" rel="noopener" style="flex:1;height:44px;border-radius:22px;background:#2C2C2E;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;text-decoration:none">Naar de winkel ↗</a></div>' +
     '<div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">' + ids.map((id) => { const p = prod(id); return '<button data-act="openProd:' + id + ':shop" style="' + CARD + ';border:0;color:#fff;text-align:left;display:flex;flex-direction:column;gap:8px;padding:14px"><span style="height:92px;border-radius:16px;background:#2C2C2E;display:flex;align-items:center;justify-content:center;color:' + fillFor(p.colors[0]) + '"><svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="' + KIND[p.kind] + '"></path></svg></span><span style="font-size:14px;font-weight:600">' + esc(p.name) + '</span><span style="font-size:13px;color:#A1A1A6">' + eur(p.price) + '</span></button>'; }).join('') + '</div>'));
@@ -843,6 +896,37 @@ document.getElementById('frame').addEventListener('keydown', (e) => {
   if (t.dataset.enter === 'linkSearch') ACT.linkSearch();
 });
 if (APP.set && APP.set.dark === false) document.body.classList.add('light');
+
+function kastSheet(r) {
+  const sec = $('section', r), doll = $('svg[viewBox="0 0 120 300"]', r), sv = tx('Opslaan', r), dr = tx('Draagt', r);
+  if (!sec || !doll || !sv || !dr) return;
+  const colL = sv.closest('button').parentElement, colR = dr.parentElement, STOPS = [300, 458, 590];
+  let cur = APP.ui.kastTop || 458;
+  const apply = (top, anim) => {
+    const tr = anim ? '.28s cubic-bezier(.2,.8,.2,1)' : 'none', h = Math.max(150, (top - 118) * 0.97), w = h * 0.4;
+    sec.style.transition = anim ? 'top ' + tr : 'none'; sec.style.top = top + 'px';
+    doll.style.transition = anim ? 'all ' + tr : 'none'; doll.style.height = h + 'px'; doll.style.width = w + 'px'; doll.style.left = ((390 - w) / 2) + 'px'; doll.style.top = '112px';
+    const t = Math.min(220, top - 150); [colL, colR].forEach((e) => { e.style.transition = anim ? 'top ' + tr : 'none'; e.style.top = t + 'px'; });
+  };
+  apply(cur, false);
+  const z = document.createElement('div'); z.setAttribute('aria-label', 'Sleep de kast omhoog of omlaag'); z.style.cssText = 'position:absolute;left:0;right:0;top:0;height:44px;touch-action:none;cursor:grab;z-index:3'; sec.appendChild(z);
+  const scale = () => { const f = document.getElementById('frame'); return f.getBoundingClientRect().height / f.offsetHeight || 1; };
+  let sy = null, st = 0, moved = false, ly = 0, lt = 0, vel = 0;
+  z.addEventListener('pointerdown', (e) => { sy = e.clientY; st = cur; moved = false; ly = e.clientY; lt = Date.now(); vel = 0; try { z.setPointerCapture(e.pointerId); } catch (x) { } });
+  z.addEventListener('pointermove', (e) => {
+    if (sy == null) return; const sc = scale(), dy = (e.clientY - sy) / sc; if (Math.abs(dy) > 4) moved = true;
+    const now = Date.now(); if (now > lt) { vel = ((e.clientY - ly) / sc) / (now - lt); ly = e.clientY; lt = now; }
+    cur = Math.max(300, Math.min(590, st + dy)); apply(cur, false);
+  });
+  const end = () => {
+    if (sy == null) return; sy = null;
+    let target;
+    if (!moved) target = cur <= 300 ? 458 : cur >= 590 ? 458 : 300;
+    else { const proj = cur + vel * 180; target = STOPS.reduce((a, b) => Math.abs(b - proj) < Math.abs(a - proj) ? b : a); }
+    cur = target; APP.ui.kastTop = cur; save(); apply(cur, true);
+  };
+  z.addEventListener('pointerup', end); z.addEventListener('pointercancel', end);
+}
 
 function badge() {
   const b = navEl.querySelector('[data-tab="koop-1-mandje"]'); if (!b) return;
