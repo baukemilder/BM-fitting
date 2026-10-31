@@ -680,6 +680,7 @@ ENH['winkel-ab'] = (r) => {
     const vis = $$('a', art).find((a) => /Bezoek/.test(a.textContent)); if (vis) { vis.setAttribute('href', brandUrl(b)); vis.setAttribute('target', '_blank'); vis.setAttribute('rel', 'noopener'); }
     const pas = tx('Pas op mij', art); if (pas) pas.setAttribute('data-act', 'openProd:' + brandProducts(b)[0] + ':shop');
   });
+  { const first = $('article', r); if (first && first.parentElement) { const c = first.parentElement; c.classList.add('hs'); c.style.overflowX = 'auto'; c.style.overflowY = 'hidden'; c.style.paddingRight = '16px'; c.style.scrollSnapType = 'x mandatory'; c.style.scrollPaddingLeft = '16px'; $$('article', c).forEach((x) => { x.style.scrollSnapAlign = 'start'; }); } }
   /* story bolletjes */
   const story = $$('a[href="#"]', r).filter((a) => SITE[a.textContent.replace(/^\s*\S*?(?=[A-Za-z])/, '').trim()] || Object.keys(SITE).some((k) => a.textContent.endsWith(k)));
   story.forEach((a) => { const b = Object.keys(SITE).find((k) => a.textContent.endsWith(k) && k !== 'Mango'); if (b) { a.removeAttribute('href'); a.setAttribute('data-act', 'shopAll:' + b); } });
