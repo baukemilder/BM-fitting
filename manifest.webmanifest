@@ -1,13 +1,13 @@
 {
   "name": "BM Fitting",
   "short_name": "BM Fitting",
-  "description": "Virtuele paskamer: zie hoe kleding op jou staat.",
+  "description": "Virtuele paskamer: scan of plak een product, zie het op jezelf en bestel het.",
   "lang": "nl",
   "start_url": "./",
   "scope": "./",
   "display": "standalone",
-  "background_color": "#ffffff",
-  "theme_color": "#c93418",
+  "background_color": "#0B0B0F",
+  "theme_color": "#0B0B0F",
   "icons": [
     {
       "src": "icon-192.png",
@@ -22,10 +22,11 @@
       "purpose": "any"
     },
     {
-      "src": "icon-512.png",
+      "src": "icon-maskable-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "maskable"
     }
-  ]
+  ],
+  "orientation": "portrait"
 }

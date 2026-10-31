@@ -1,6 +1,6 @@
 // BM Fitting service worker: onthoudt de app voor offline gebruik
-const CACHE = 'bmfitting-v1';
-const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png'];
+const CACHE = 'bmfitting-v3';
+const FILES = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './apple-touch-icon.png', './icon-maskable-512.png'];
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(FILES)));
   self.skipWaiting();
